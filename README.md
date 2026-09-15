@@ -300,7 +300,7 @@ This project is licensed under the ISC License.
 
 Chatify is built on Socket.IO, MongoDB, Cloudinary, Resend and Arcjet.
 
-## Contact## ContactContact## Contact
+## Contact
 
 Tanushree Bobade — github.com/tanushreebobade
 
