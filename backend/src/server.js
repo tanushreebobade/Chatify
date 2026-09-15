@@ -9,7 +9,7 @@ import { connectDB } from './lib/db.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { ENV } from './lib/env.js';
-import { app,server } from './lib/socket.js';
+import { app, server, isOriginAllowed } from './lib/socket.js';
 
 dotenv.config();
 
@@ -23,7 +23,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.set('trust proxy', 1);
 
 app.use(express.json({limit:'10mb'}));
-app.use(cors({origin:ENV.CLIENT_URL, credentials:true }));
+app.use(cors({
+    origin: (origin, callback) => {
+        if (isOriginAllowed(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true 
+}));
 app.use(cookieParser());
 
 // Lightweight health check for uptime checks / Render / load balancers
