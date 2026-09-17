@@ -6,8 +6,9 @@ import Avatar from "./ui/Avatar";
 
 function ChatHeader() {
   const { selectedUser, setSelectedUser } = useChatStore();
-  const { onlineUsers } = useAuthStore();
+  const { onlineUsers, authUser } = useAuthStore();
   const isOnline = onlineUsers.includes(selectedUser._id);
+  const isSelf = authUser?._id === selectedUser._id;
 
   useEffect(() => {
     const handleEscKey = (event) => {
@@ -31,7 +32,7 @@ function ChatHeader() {
       <Avatar src={selectedUser.profilePicture} name={selectedUser.fullName} size="sm" online={isOnline} />
 
       <div className="min-w-0 flex-1">
-        <h2 className="truncate text-[15px] font-semibold leading-tight text-mist-100">{selectedUser.fullName}</h2>
+        <h2 className="truncate text-[15px] font-semibold leading-tight text-mist-100">{selectedUser.fullName} {isSelf && "(You)"}</h2>
         <p
           className={`mt-0.5 flex items-center gap-1.5 text-xs transition-colors ${
             isOnline ? "text-live" : "text-mist-500"

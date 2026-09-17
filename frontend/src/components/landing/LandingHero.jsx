@@ -99,7 +99,7 @@ export default function LandingHero() {
                         <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-live ring-2 ring-ink-800" />
                       </div>
                       <div className="text-left leading-tight">
-                        <div className="text-xs font-semibold text-mist-100">rohit sharma</div>
+                        <div className="text-xs font-semibold text-mist-100">Rohit Sharma</div>
                         <div className="text-[10px] text-mist-500">Online</div>
                       </div>
                     </div>
@@ -151,11 +151,11 @@ export default function LandingHero() {
                     {/* Contact 3 */}
                     <div className="p-3 hover:bg-ink-700/20 flex items-center gap-3 cursor-pointer">
                       <div className="relative w-9 h-9 rounded-full bg-ink-700 flex items-center justify-center text-xs font-medium text-mist-500">
-                        DC
+                        RV
                       </div>
                       <div className="flex-1 min-w-0 text-left">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-medium text-mist-100">dev core</span>
+                          <span className="text-xs font-medium text-mist-100">Riya Verma</span>
                           <span className="text-[10px] text-mist-500">Yesterday</span>
                         </div>
                         <p className="text-[11px] text-mist-500 truncate">Sounds great, thanks!</p>

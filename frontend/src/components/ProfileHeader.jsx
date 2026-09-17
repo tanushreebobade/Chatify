@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { LogOutIcon, VolumeOffIcon, Volume2Icon, CameraIcon, LoaderIcon } from "lucide-react";
+import { LogOutIcon, VolumeOffIcon, Volume2Icon, CameraIcon, LoaderIcon, TrashIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
@@ -10,7 +10,7 @@ const mouseClickSound = new Audio("/sounds/mouse-click.mp3");
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
 function ProfileHeader() {
-  const { logout, authUser, updateProfile, isUpdatingProfile } = useAuthStore();
+  const { logout, authUser, updateProfile, isUpdatingProfile, deleteProfile, removeProfilePhoto, isRemovingProfilePhoto } = useAuthStore();
   const { isSoundEnabled, toggleSound } = useChatStore();
   const fileInputRef = useRef(null);
 
@@ -38,6 +38,12 @@ function ProfileHeader() {
     toggleSound();
   };
 
+  const handleDeleteProfile = () => {
+    if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+      deleteProfile();
+    }
+  };
+
   return (
     <header className="safe-top border-b border-ink-600/60 px-4 pb-3 pt-4">
       <div className="mb-3 flex items-center justify-between">
@@ -62,10 +68,20 @@ function ProfileHeader() {
           >
             <LogOutIcon className="size-5" />
           </button>
+          <button
+            type="button"
+            className="icon-btn hover:text-danger"
+            onClick={handleDeleteProfile}
+            aria-label="Delete account"
+            title="Delete account"
+          >
+            <TrashIcon className="size-5" />
+          </button>
         </div>
       </div>
 
       <div className="flex items-center gap-3">
+        <div className="relative">
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
@@ -88,6 +104,23 @@ function ProfileHeader() {
             )}
           </span>
         </button>
+        {authUser.profilePicture && (
+          <button
+            type="button"
+            onClick={removeProfilePhoto}
+            disabled={isRemovingProfilePhoto}
+            className="absolute -bottom-1 -right-1 z-10 rounded-full bg-ink-800 p-1.5 text-mist-400 border border-ink-600 hover:bg-ink-700 hover:text-danger disabled:cursor-wait"
+            title="Remove photo"
+            aria-label="Remove photo"
+          >
+            {isRemovingProfilePhoto ? (
+              <LoaderIcon className="size-3.5 animate-spin" />
+            ) : (
+              <TrashIcon className="size-3.5" />
+            )}
+          </button>
+        )}
+        </div>
         <input
           type="file"
           accept="image/*"

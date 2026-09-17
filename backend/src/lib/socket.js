@@ -3,6 +3,7 @@ import http from "http";
 import express from "express";
 import { ENV } from "./env.js";
 import { socketAuthMiddleware } from "../middleware/socket.auth.middleware.js";
+import Message from "../models/Message.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -59,6 +60,21 @@ io.on("connection", (socket) => {
     if (userSocketMap[userId] === socket.id) {
       delete userSocketMap[userId];
       io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    }
+  });
+
+  socket.on("markMessagesAsRead", async ({ senderId }) => {
+    try {
+      await Message.updateMany(
+        { senderId, receiverId: userId, isRead: false },
+        { $set: { isRead: true } }
+      );
+      const senderSocketId = getReceiverSocketId(senderId);
+      if (senderSocketId) {
+        io.to(senderSocketId).emit("messagesRead", { receiverId: userId });
+      }
+    } catch (error) {
+      console.log("Error marking messages as read:", error);
     }
   });
 });

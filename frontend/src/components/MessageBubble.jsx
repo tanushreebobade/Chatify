@@ -1,4 +1,4 @@
-import { ClockIcon } from "lucide-react";
+import { ClockIcon, CheckCheckIcon } from "lucide-react";
 import { formatTime } from "../lib/format";
 
 // `position` describes where the message sits inside a run of consecutive
@@ -64,6 +64,12 @@ function MessageBubble({ message, isMine, position = "single", animate = false, 
         >
           {message.isOptimistic && <ClockIcon className="size-3" aria-label="Sending" />}
           <time dateTime={message.createdAt}>{formatTime(message.createdAt)}</time>
+          {isMine && !message.isOptimistic && (
+            <CheckCheckIcon 
+              className={`size-3.5 ${message.isRead ? "text-lagoon-300" : "text-lagoon-200/50"}`} 
+              aria-label={message.isRead ? "Read" : "Delivered"} 
+            />
+          )}
         </span>
       </div>
     </div>

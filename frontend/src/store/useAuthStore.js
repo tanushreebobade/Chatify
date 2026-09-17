@@ -15,6 +15,9 @@ export const useAuthStore = create((set, get) => ({
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
+  isRemovingProfilePhoto: false,
+  isSendingResetLink: false,
+  isResettingPassword: false,
   socket: null,
   // "idle" | "connecting" | "connected" | "disconnected"
   socketStatus: "idle",
@@ -75,6 +78,19 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  deleteProfile: async () => {
+    try {
+      await axiosInstance.delete("/auth/profile");
+      get().disconnectSocket();
+      useChatStore.getState().reset();
+      set({ authUser: null, onlineUsers: [] });
+      toast.success("Account deleted successfully");
+    } catch (error) {
+      console.error("Profile deletion failed:", error);
+      toast.error(getErrorMessage(error, "Couldn't delete account. Please try again."));
+    }
+  },
+
   updateProfile: async (data) => {
     set({ isUpdatingProfile: true });
     try {
@@ -86,6 +102,48 @@ export const useAuthStore = create((set, get) => ({
       toast.error(getErrorMessage(error, "Couldn't update your photo. Please try again."));
     } finally {
       set({ isUpdatingProfile: false });
+    }
+  },
+
+  removeProfilePhoto: async () => {
+    set({ isRemovingProfilePhoto: true });
+    try {
+      const res = await axiosInstance.delete("/auth/remove-photo");
+      set({ authUser: res.data });
+      toast.success("Profile photo removed");
+    } catch (error) {
+      console.error("Profile photo removal failed:", error);
+      toast.error(getErrorMessage(error, "Couldn't remove your photo. Please try again."));
+    } finally {
+      set({ isRemovingProfilePhoto: false });
+    }
+  },
+
+  forgotPassword: async (email) => {
+    set({ isSendingResetLink: true });
+    try {
+      const res = await axiosInstance.post("/auth/forgot-password", { email });
+      toast.success(res.data.message || "Reset link sent to your email");
+    } catch (error) {
+      console.error("Forgot password failed:", error);
+      toast.error(getErrorMessage(error, "Couldn't send reset link."));
+    } finally {
+      set({ isSendingResetLink: false });
+    }
+  },
+
+  resetPassword: async (token, password) => {
+    set({ isResettingPassword: true });
+    try {
+      const res = await axiosInstance.post(`/auth/reset-password/${token}`, { password });
+      toast.success(res.data.message || "Password reset successfully. You can now log in.");
+      return true;
+    } catch (error) {
+      console.error("Reset password failed:", error);
+      toast.error(getErrorMessage(error, "Couldn't reset password."));
+      return false;
+    } finally {
+      set({ isResettingPassword: false });
     }
   },
 

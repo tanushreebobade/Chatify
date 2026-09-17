@@ -1,6 +1,7 @@
 import { ImageIcon } from "lucide-react";
 import Avatar from "./ui/Avatar";
 import { formatListTime } from "../lib/format";
+import { useAuthStore } from "../store/useAuthStore";
 
 function Preview({ lastMessage, isMine }) {
   if (!lastMessage) return null;
@@ -26,7 +27,9 @@ function Preview({ lastMessage, isMine }) {
 }
 
 function ConversationRow({ user, online, selected, unread = 0, lastMessage, isMine, subtitle, onSelect }) {
+  const { authUser } = useAuthStore();
   const hasPreview = Boolean(lastMessage?.text || lastMessage?.image);
+  const isSelf = authUser?._id === user._id;
 
   return (
     <li>
@@ -53,7 +56,7 @@ function ConversationRow({ user, online, selected, unread = 0, lastMessage, isMi
                 unread > 0 ? "font-bold text-mist-100" : "font-semibold text-mist-100"
               }`}
             >
-              {user.fullName}
+              {user.fullName} {isSelf && "(You)"}
             </span>
             {lastMessage?.createdAt && (
               <span

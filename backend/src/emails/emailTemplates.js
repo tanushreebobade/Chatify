@@ -48,3 +48,36 @@ export function createWelcomeEmailTemplate(name, clientURL) {
   </html>
   `;
 }
+
+export function createPasswordResetTemplate(resetURL) {
+  return `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Your Password</title>
+  </head>
+  <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+    <div style="background: linear-gradient(to right, #36D1DC, #5B86E5); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+      <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 500;">Reset Your Password</h1>
+    </div>
+    <div style="background-color: #ffffff; padding: 35px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+      <p style="font-size: 16px;">We received a request to reset your password for your Chatify account. If you didn't make this request, you can safely ignore this email.</p>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${resetURL}" style="background: linear-gradient(to right, #36D1DC, #5B86E5); color: white; text-decoration: none; padding: 12px 30px; border-radius: 50px; font-weight: 500; display: inline-block;">Reset Password</a>
+      </div>
+      
+      <p style="margin-bottom: 5px;">This link will expire in 1 hour.</p>
+      
+      <p style="margin-top: 25px; margin-bottom: 0;">Best regards,<br>The Chatify Team</p>
+    </div>
+    
+    <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
+      <p>© 2025 Chatify. All rights reserved.</p>
+    </div>
+  </body>
+  </html>
+  `;
+}

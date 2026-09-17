@@ -63,6 +63,12 @@ export const useChatStore = create((set, get) => ({
     }
     const unreadCounts = { ...get().unreadCounts };
     delete unreadCounts[selectedUser._id];
+
+    const socket = useAuthStore.getState().socket;
+    if (socket) {
+      socket.emit("markMessagesAsRead", { senderId: selectedUser._id });
+    }
+
     // Re-selecting the open conversation (same person from the other tab, or
     // clicking its row again) must not drop the messages already loaded —
     // the container doesn't remount for the same id, so nothing would refetch.
@@ -157,6 +163,10 @@ export const useChatStore = create((set, get) => ({
 
     if (isFromOpenConversation) {
       set((state) => ({ messages: [...state.messages, newMessage] }));
+      const socket = useAuthStore.getState().socket;
+      if (socket) {
+        socket.emit("markMessagesAsRead", { senderId });
+      }
     } else {
       set((state) => ({
         unreadCounts: {
@@ -182,11 +192,23 @@ export const useChatStore = create((set, get) => ({
     get().unsubscribeFromMessages(socket);
     activeMessageHandler = (message) => get().handleIncomingMessage(message);
     socket.on("newMessage", activeMessageHandler);
+
+    socket.on("messagesRead", ({ receiverId }) => {
+      set((state) => {
+        if (state.selectedUser?._id !== receiverId) return state;
+        return {
+          messages: state.messages.map((m) =>
+            m.receiverId === receiverId && m.senderId !== receiverId ? { ...m, isRead: true } : m
+          ),
+        };
+      });
+    });
   },
 
   unsubscribeFromMessages: (socket) => {
     if (!socket || !activeMessageHandler) return;
     socket.off("newMessage", activeMessageHandler);
+    socket.off("messagesRead");
     activeMessageHandler = null;
   },
 

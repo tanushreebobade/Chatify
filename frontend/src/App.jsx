@@ -5,6 +5,8 @@ import ChatPage from "./pages/ChatPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import PageLoader from "./components/PageLoader.jsx";
 import { useAuthStore } from "./store/useAuthStore";
 
@@ -40,6 +42,8 @@ function App() {
         <Route path="/chat" element={authUser ? <ChatPage /> : <Navigate to="/login" replace />} />
         <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/chat" replace />} />
         <Route path="/signup" element={!authUser ? <SignupPage /> : <Navigate to="/chat" replace />} />
+        <Route path="/forgot-password" element={!authUser ? <ForgotPasswordPage /> : <Navigate to="/chat" replace />} />
+        <Route path="/reset-password/:token" element={!authUser ? <ResetPasswordPage /> : <Navigate to="/chat" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Toaster position="top-center" toastOptions={toastOptions} />

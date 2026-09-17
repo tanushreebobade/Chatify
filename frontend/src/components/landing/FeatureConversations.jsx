@@ -8,12 +8,12 @@ export default function FeatureConversations() {
   const conversationItems = [
     {
       id: 1,
-      name: "dev core",
+      name: "Riya Verma",
       snippet: "Sprint deployment completed on staging.",
       time: "2m ago",
       unread: 3,
       online: true,
-      initials: "DC",
+      initials: "RV",
       isGroup: true,
     },
     {
@@ -27,7 +27,7 @@ export default function FeatureConversations() {
     },
     {
       id: 3,
-      name: "rohit sharma",
+      name: "Rohit Sharma",
       snippet: "I updated the Cloudinary credentials.",
       time: "1h ago",
       unread: 0,

@@ -66,6 +66,11 @@ function LoginPage() {
           error={errors.password}
           disabled={isLoggingIn}
         />
+        <div className="flex justify-end">
+          <Link to="/forgot-password" className="text-sm font-medium text-lagoon-400 hover:text-lagoon-300">
+            Forgot Password?
+          </Link>
+        </div>
         <button type="submit" className="btn-primary w-full" disabled={isLoggingIn} aria-busy={isLoggingIn}>
           {isLoggingIn ? (
             <>

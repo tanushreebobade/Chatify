@@ -45,11 +45,11 @@ export default function FeatureResponsive() {
                     <div className="text-[10px] text-mist-400">See you at 6!</div>
                   </div>
                   <div className="p-2 rounded-lg hover:bg-ink-700/30 text-xs text-mist-400">
-                    <div className="font-medium text-mist-300">rohit sharma</div>
+                    <div className="font-medium text-mist-300">Rohit Sharma</div>
                     <div className="text-[10px] text-mist-500">Sent design specs</div>
                   </div>
                   <div className="p-2 rounded-lg hover:bg-ink-700/30 text-xs text-mist-400">
-                    <div className="font-medium text-mist-300">dev core</div>
+                    <div className="font-medium text-mist-300">Riya Verma</div>
                     <div className="text-[10px] text-mist-500">3 unread messages</div>
                   </div>
                 </div>
