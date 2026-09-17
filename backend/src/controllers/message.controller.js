@@ -106,3 +106,59 @@ export const sendMessage = async (req, res) => {
         res.status(500).json({message:"Internal Server Error"});
     }
 }
+
+export const deleteMessage = async (req, res) => {
+    try {
+        const { id: messageId } = req.params;
+        const userId = req.user._id;
+
+        const message = await Message.findById(messageId);
+        
+        if (!message) {
+            return res.status(404).json({ message: "Message not found" });
+        }
+
+        // Only allow sender to delete the message
+        if (message.senderId.toString() !== userId.toString()) {
+            return res.status(403).json({ message: "Unauthorized to delete this message" });
+        }
+
+        await Message.findByIdAndDelete(messageId);
+
+        // Notify the receiver in real-time
+        const receiverSocketId = getReceiverSocketId(message.receiverId);
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit("messageDeleted", messageId);
+        }
+
+        res.status(200).json({ message: "Message deleted successfully", id: messageId });
+    } catch (error) {
+        console.log("Error in deleteMessage controller:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+export const clearChat = async (req, res) => {
+    try {
+        const myId = req.user._id;
+        const { id: userToChatId } = req.params;
+
+        await Message.deleteMany({
+            $or: [
+                { senderId: myId, receiverId: userToChatId },
+                { senderId: userToChatId, receiverId: myId }
+            ]
+        });
+
+        // Notify the partner in real-time
+        const partnerSocketId = getReceiverSocketId(userToChatId);
+        if (partnerSocketId) {
+            io.to(partnerSocketId).emit("chatCleared", { partnerId: myId });
+        }
+
+        res.status(200).json({ message: "Chat cleared successfully" });
+    } catch (error) {
+        console.log("Error in clearChat controller:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}

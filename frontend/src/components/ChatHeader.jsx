@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { ArrowLeftIcon, XIcon } from "lucide-react";
+import { ArrowLeftIcon, XIcon, TrashIcon, Phone, MoreVertical } from "lucide-react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import Avatar from "./ui/Avatar";
 
 function ChatHeader() {
-  const { selectedUser, setSelectedUser } = useChatStore();
+  const { selectedUser, setSelectedUser, clearChat } = useChatStore();
   const { onlineUsers, authUser } = useAuthStore();
   const isOnline = onlineUsers.includes(selectedUser._id);
   const isSelf = authUser?._id === selectedUser._id;
@@ -43,15 +43,48 @@ function ChatHeader() {
         </p>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setSelectedUser(null)}
-        className="icon-btn hidden md:inline-flex"
-        aria-label="Close conversation"
-        title="Close (Esc)"
-      >
-        <XIcon className="size-5" />
-      </button>
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          className="icon-btn hidden sm:inline-flex text-mist-400 hover:text-mist-100"
+          aria-label="Call"
+          title="Audio call"
+        >
+          <Phone className="size-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            if (window.confirm("Are you sure you want to clear this chat for everyone?")) {
+              clearChat();
+            }
+          }}
+          className="icon-btn hover:text-danger"
+          aria-label="Clear chat"
+          title="Clear chat"
+        >
+          <TrashIcon className="size-5" />
+        </button>
+
+        <button
+          type="button"
+          className="icon-btn text-mist-400 hover:text-mist-100"
+          aria-label="More options"
+          title="More options"
+        >
+          <MoreVertical className="size-5" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSelectedUser(null)}
+          className="icon-btn hidden md:inline-flex"
+          aria-label="Close conversation"
+          title="Close (Esc)"
+        >
+          <XIcon className="size-5" />
+        </button>
+      </div>
     </header>
   );
 }

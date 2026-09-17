@@ -1,5 +1,6 @@
-import { ClockIcon, CheckCheckIcon } from "lucide-react";
+import { ClockIcon, CheckCheckIcon, TrashIcon } from "lucide-react";
 import { formatTime } from "../lib/format";
+import { useChatStore } from "../store/useChatStore";
 
 // `position` describes where the message sits inside a run of consecutive
 // messages from the same sender: single | first | middle | last. The corner
@@ -20,6 +21,7 @@ const RADII = {
 };
 
 function MessageBubble({ message, isMine, position = "single", animate = false, onOpenImage, onImageLoad }) {
+  const { deleteMessage } = useChatStore();
   const radius = RADII[isMine ? "mine" : "theirs"][position];
   const hasText = Boolean(message.text);
   const hasImage = Boolean(message.image);
@@ -31,10 +33,19 @@ function MessageBubble({ message, isMine, position = "single", animate = false, 
       }`}
     >
       <div
-        className={`relative max-w-[82%] sm:max-w-[72%] lg:max-w-[60%] ${radius} ${
+        className={`group relative max-w-[82%] sm:max-w-[72%] lg:max-w-[60%] ${radius} ${
           isMine ? "bg-lagoon-700 text-white" : "bg-ink-700 text-mist-100"
         } ${message.isOptimistic ? "opacity-70" : ""} ${hasImage && !hasText ? "p-1" : "px-3.5 py-2"}`}
       >
+        {isMine && !message.isOptimistic && (
+          <button
+            onClick={() => deleteMessage(message._id)}
+            className="absolute -left-8 top-1/2 -translate-y-1/2 p-1.5 text-danger opacity-0 transition-opacity hover:bg-ink-700/50 rounded-full group-hover:opacity-100"
+            title="Delete message"
+          >
+            <TrashIcon className="size-4" />
+          </button>
+        )}
         {hasImage && (
           <button
             type="button"
@@ -66,7 +77,7 @@ function MessageBubble({ message, isMine, position = "single", animate = false, 
           <time dateTime={message.createdAt}>{formatTime(message.createdAt)}</time>
           {isMine && !message.isOptimistic && (
             <CheckCheckIcon 
-              className={`size-3.5 ${message.isRead ? "text-lagoon-300" : "text-lagoon-200/50"}`} 
+              className={`size-3.5 ${message.isRead ? "text-sky-400" : "text-lagoon-200/50"}`} 
               aria-label={message.isRead ? "Read" : "Delivered"} 
             />
           )}

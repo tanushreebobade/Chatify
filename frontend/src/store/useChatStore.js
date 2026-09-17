@@ -156,6 +156,32 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  deleteMessage: async (messageId) => {
+    try {
+      await axiosInstance.delete(`/message/${messageId}`);
+      set((state) => ({
+        messages: state.messages.filter((m) => m._id !== messageId),
+      }));
+      toast.success("Message deleted");
+    } catch (error) {
+      console.error("Failed to delete message:", error);
+      toast.error(getErrorMessage(error, "Couldn't delete message."));
+    }
+  },
+
+  clearChat: async () => {
+    const { selectedUser } = get();
+    if (!selectedUser) return;
+    try {
+      await axiosInstance.delete(`/message/clear/${selectedUser._id}`);
+      set({ messages: [] });
+      toast.success("Chat cleared");
+    } catch (error) {
+      console.error("Failed to clear chat:", error);
+      toast.error(getErrorMessage(error, "Couldn't clear chat."));
+    }
+  },
+
   handleIncomingMessage: (newMessage) => {
     const { selectedUser, chats, allContacts, isSoundEnabled } = get();
     const senderId = newMessage.senderId;
@@ -203,12 +229,29 @@ export const useChatStore = create((set, get) => ({
         };
       });
     });
+
+    socket.on("messageDeleted", (messageId) => {
+      set((state) => ({
+        messages: state.messages.filter((m) => m._id !== messageId),
+      }));
+    });
+
+    socket.on("chatCleared", ({ partnerId }) => {
+      set((state) => {
+        if (state.selectedUser?._id === partnerId) {
+          return { messages: [] };
+        }
+        return state;
+      });
+    });
   },
 
   unsubscribeFromMessages: (socket) => {
     if (!socket || !activeMessageHandler) return;
     socket.off("newMessage", activeMessageHandler);
     socket.off("messagesRead");
+    socket.off("messageDeleted");
+    socket.off("chatCleared");
     activeMessageHandler = null;
   },
 
